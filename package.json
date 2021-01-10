@@ -4,7 +4,7 @@
     "description": "This is a simple project",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon index.ts --exec ts-node"
+        "dev": "nodemon api/index.ts --exec ts-node"
     },
     "keywords": [
         "javascript",
