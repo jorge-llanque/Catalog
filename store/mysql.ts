@@ -43,6 +43,15 @@ function listdata(table:string){
     })
 }
 
+function get(table:string, id:string){
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM ${table} WHERE id=${id}`, (err:string, data:string) => {
+            if(err) return reject(err);
+            resolve(data);
+        })
+    })
+}
+
 function query(table:string, query:string, join:any){
     let joinQuery = '';
     if(join){
@@ -60,5 +69,6 @@ function query(table:string, query:string, join:any){
 
 module.exports = {
     listdata,
+    get,
     query,
 }
