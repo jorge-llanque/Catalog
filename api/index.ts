@@ -7,7 +7,9 @@ const swaggerUi = require('swagger-ui-express');
 import config from '../config';
 import {errors} from '../network/errors';
 import user from './components/user/network';
-
+import inventory from './components/inventory/network';
+import products from './components/products/network';
+import rateproduct from './components/rateproduct/network';
 
 const app = express();
 app.use(cors());
@@ -17,7 +19,11 @@ app.use(bodyParser.json());
 const swaggerDoc = require('../swagger.json');
 
 
+/* ROUTES */
 app.use('/api/user', user);
+app.use('/api/inventory', inventory);
+app.use('/api/products', products);
+app.use('/api/rateproduct', rateproduct);
 /* app.use(errors); */
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 

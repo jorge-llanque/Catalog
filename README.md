@@ -1,8 +1,8 @@
 # CATALOG_PROJECT
-This is a project open source that shows an real example of an ecommerce of products and the interaction of users.
+This is a project open source that shows a real example of an ecommerce of products and the interaction of users.
 
 ## Initialization
-For start the project you need download or clone this repository and write this command:
+For start the project you need download or clone this repository and write these commands:
 ```
 npm install
 npm run dev

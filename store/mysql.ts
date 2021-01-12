@@ -52,6 +52,53 @@ function get(table:string, id:string){
     })
 }
 
+function removeItem(table:string, id:string){
+    return new Promise((resolve, reject) => {
+        connection.query(`DELETE FROM ${table} WHERE id="${id}"`, (err:string, data:string) => {
+            if(err) return reject(err);
+            resolve(data);
+        })
+    })
+}
+
+function getByUsername(table:string, username:string){
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM ${table} WHERE username = ${username}`, (err:string, data:string) => {
+            if(err) return reject(err);
+            resolve(data);
+        })
+    })
+}
+
+function insert(table:string, data:any){
+    return new Promise((resolve, reject) => {
+        connection.query(`INSERT INTO ${table} SET ?`, data, (err:string, result:string) => {
+            console.log(err);
+            if(err) return reject(err);
+            resolve(data);
+        })
+    })
+}
+
+function update(table:string, data:any){
+    return new Promise((resolve, reject) => {
+        connection.query(`UPDATE ${table} SET ? WHERE id=?`, [data, data.id], (err:string, result:string) => {
+            if(err) return reject(err);
+            resolve(data);
+        })
+    })
+}
+
+function refreshRating(table:string, data:any){
+    return new Promise((resolve, reject) => {
+        connection.query("UPDATE `products` SET `like`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 1 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + "), `unlike`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 0 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + ") WHERE `id` = " + "'" + data.productId + "'" + "", (err:string, result:string) => {
+            if(err) return reject(err);
+            console.log(err);
+            resolve(data);
+        })
+    })
+}
+
 function query(table:string, query:string, join:any){
     let joinQuery = '';
     if(join){
@@ -67,8 +114,14 @@ function query(table:string, query:string, join:any){
     })
 }
 
+
 module.exports = {
     listdata,
     get,
-    query,
+    getByUsername,
+    insert,
+    update,
+    removeItem,
+    refreshRating,
+    query
 }

@@ -17,6 +17,12 @@
     "tags": [{
         "name": "user",
         "description": "Operations about user"
+    }, {
+        "name": "inventory",
+        "description": "Operations about inventory of items"
+    }, {
+        "name": "products",
+        "description": "Operations about products"
     }],
     "schemes": [
         "https",
@@ -51,7 +57,7 @@
             }
         },
         "/user/login": {
-            "get": {
+            "post": {
                 "tags": [
                     "user"
                 ],
@@ -235,6 +241,283 @@
                     }
                 }
             }
+        },
+        "/inventory/list": {
+            "get": {
+                "tags": [
+                    "inventory"
+                ],
+                "summary": "Get a list of inventory",
+                "description": "",
+                "operationId": "listInventory",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/inventory": {
+            "post": {
+                "tags": [
+                    "inventory"
+                ],
+                "summary": "Register a new item",
+                "description": "The user needs a special permission for this action.",
+                "operationId": "CreateItem",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Registered item object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Inventory"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/inventory/{itemId}": {
+            "put": {
+                "tags": [
+                    "inventory"
+                ],
+                "summary": "Updated an existing item",
+                "description": "",
+                "operationId": "updateItem",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Updated item object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Inventory"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "inventory"
+                ],
+                "summary": "Delete an existing item",
+                "description": "",
+                "operationId": "deleteItem",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Delete item object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Inventory"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Get a list of products",
+                "description": "",
+                "operationId": "listProducts",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Save an item of inventory as a new product",
+                "description": "",
+                "operationId": "saveProduct",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Save an item object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Products"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/products/{productId}/uploadImage": {
+            "post": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Upload a photo",
+                "description": "",
+                "operationId": "uploadImageProduct",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "upload an image object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Products"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/products/{productId}": {
+            "delete": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Delete an existing product",
+                "description": "",
+                "operationId": "deleteProduct",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Delete a product object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Products"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/rateproduct/like": {
+            "post": {
+                "tags": [
+                    "RateProduct"
+                ],
+                "summary": "rate a product as a like",
+                "description": "",
+                "operationId": "likeProduct",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Like an item object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/RateProduct"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/rateproduct/unlike": {
+            "post": {
+                "tags": [
+                    "RateProduct"
+                ],
+                "summary": "rate a product as an unlike",
+                "description": "",
+                "operationId": "unlikeProduct",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Unlike an item object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/RateProduct"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/rateproduct/unrate": {
+            "delete": {
+                "tags": [
+                    "RateProduct"
+                ],
+                "summary": "Remove a rate of product",
+                "description": "",
+                "operationId": "unRateProduct",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Unrate an item object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/RateProduct"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -256,9 +539,63 @@
                 "email": {
                     "type": "string"
                 },
+                "role": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string",
                     "description": "User Status"
+                }
+            }
+        },
+        "Inventory": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "Products": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "idInventoryItems": {
+                    "type": "string"
+                },
+                "imagenUrl": {
+                    "type": "string"
+                },
+                "like": {
+                    "type": "integer"
+                },
+                "unlike": {
+                    "type": "integer"
+                }
+            }
+        },
+        "RateProduct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "admire": {
+                    "type": "tinyinteger"
                 }
             }
         }
