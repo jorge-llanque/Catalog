@@ -1,6 +1,7 @@
+import { rejects } from 'assert';
 import mysql from 'mysql';
-
 import config from '../config';
+import {User} from '../core/models';
 
 const dbconfig:any = {
     host: config.mysql.host,
@@ -34,6 +35,44 @@ function handleConnection(){
 
 handleConnection();
 
+
+export function getDataById(table:string, id:string): Promise<User>{
+    return new Promise((resolve, reject) => {
+        connection.query("SELECT * FROM `"+ table +"` WHERE `id` = '" + id +"'", (err:string, data:User) => {
+            if(err) return reject(err);
+            resolve(data);
+        })
+    })
+}
+
+export function updateDataById(table:string, id:string, newData:any): Promise<User>{
+    return new Promise((resolve, reject) => {
+        connection.query(`UPDATE ${table} SET ? WHERE id=?`, [newData, id], (err:string, result:any) => {
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+
+export function deleteDataById(table:string, id:string):Promise<void>{
+    return new Promise((resolve, reject) => {
+        connection.query(`DELETE FROM ${table} WHERE id="${id}"`, (err:string, result:any) => {
+            if(err) return reject(err);
+            resolve(result)
+        })
+    })
+}
+
+export function insertNewData(table: string, data: User):Promise<User>{
+    return new Promise((resolve, reject) => {
+        connection.query(`INSERT INTO ${table} SET ?`, data, (err: string, data:any) => {
+            if(err) return reject(err);
+            resolve(data)
+        })
+    })
+}
+/* ************************ */
+
 function listdata(table:string){
     return new Promise((resolve, reject) => {
         connection.query(`SELECT * FROM ${table}`, (err:string, data:string) => {
@@ -51,6 +90,7 @@ function get(table:string, id:string){
         })
     })
 }
+
 
 function removeItem(table:string, id:string){
     return new Promise((resolve, reject) => {
@@ -116,6 +156,10 @@ function query(table:string, query:string, join:any){
 
 
 module.exports = {
+    getDataById,
+    updateDataById,
+    deleteDataById,
+    insertNewData,
     listdata,
     get,
     getByUsername,

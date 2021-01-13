@@ -1,10 +1,12 @@
-import { error } from "./response";
+import {Request, Response} from 'express';
+const response = require('./response');
 
-export function errors(err:any, req:Request, res:Response){
-    console.error('[error]', err);
+export default function errors(err:any, req:Request, res:Response): void{
+    console.error('[error]', err.statusMessage);
 
-    const message = err.message || 'Internal error';
-    const status = err.statusCode || 500;
+    const message: object | string = err.message || 'Internal error';
+    const status: number = err.statusCode || response.statusDefault.error;
 
-    error(req, res, message,status);
+    response.error(req, res, message, status);
 }
+

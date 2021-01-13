@@ -1,21 +1,28 @@
-export function success(req:any, res:any, message:String, status:Number){
-    let statusCode = status || 200;
-    let statusMessage = message || '';
+import {Request, Response} from 'express';
 
-    res.status(status).send({
-        error: false,
-        status:status,
-        body:message
-    });
+export enum statusDefault {
+    "success" = 200,
+    "error" = 500
 }
 
-export function error(req:any, res:any, message:String, status:Number){
-    let statusCode = status || 500;
-    let statusMessage = message || 'Internal server error';
+exports.success = function(req:any, res:any, message:any, status:number):void{
+    let statusCode:number = status || statusDefault.success;
+    let statusMessage:object = message || '';
 
     res.status(statusCode).send({
         error: false,
-        status: status,
-        body: message
+        status: statusCode,
+        body: statusMessage
+    });
+}
+
+exports.error = function(req:any, res:any, message:any, status:number, details?:string){
+    let statusCode:number = status || statusDefault.error;
+    let statusMessage:object | string = message || 'Internal server error';
+
+    res.status(500).send({
+        error: '',
+        status: 500,
+        body: 'Internal server error'
     });
 }

@@ -126,31 +126,12 @@
                 }
             }
         },
-        "/user/list": {
+        "/user/{userId}": {
             "get": {
                 "tags": [
                     "user"
                 ],
-                "summary": "Get a list of all users",
-                "description": "",
-                "operationId": "listUsers",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [],
-                "responses": {
-                    "default": {
-                        "description": "successful operation"
-                    }
-                }
-            }
-        },
-        "/user/{username}": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Get user by user name",
+                "summary": "Get user by id",
                 "description": "",
                 "operationId": "getUserByName",
                 "produces": [
@@ -182,7 +163,7 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Updated user",
+                "summary": "Update user by id",
                 "description": "This can only be done by the logged in user.",
                 "operationId": "updateUser",
                 "produces": [
@@ -218,7 +199,7 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Delete user",
+                "summary": "Delete user by id",
                 "description": "This can only be done by the logged in user.",
                 "operationId": "deleteUser",
                 "produces": [

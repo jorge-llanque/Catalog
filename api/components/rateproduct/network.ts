@@ -1,5 +1,5 @@
 import express, {Router, Request, Response} from 'express';
-import { success } from '../../../network/response';
+/* import { success } from '../../../network/response'; */
 const response = require('../../../network/response');
 const Controller = require('./index');
 
