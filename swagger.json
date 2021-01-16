@@ -365,14 +365,14 @@
                 }
             }
         },
-        "/products/{productId}/uploadImage": {
-            "post": {
+        "/products/{productId}/updateImage": {
+            "put": {
                 "tags": [
                     "products"
                 ],
-                "summary": "Upload a photo",
+                "summary": "Update image",
                 "description": "",
-                "operationId": "uploadImageProduct",
+                "operationId": "updateImageProduct",
                 "produces": [
                     "application/json"
                 ],

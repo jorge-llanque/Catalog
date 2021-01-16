@@ -23,7 +23,8 @@ function getUser(req:Request, res:Response){
 
 function updateUser(req:Request, res:Response){
     const {id} = req.params;
-    userServices.updateUser(id, req.body).then((user:User) => {
+    const body: object = req.body;
+    userServices.updateUser(id, body).then((user:User) => {
         res.status(204).send(user)
     }).catch( (err:any) => {
         res.status(400).json({error: err.message })
@@ -40,8 +41,8 @@ function deleteUser(req:Request, res:Response){
 }
 
 function registerUser(req:Request, res:Response){
-    const {username, fullname, lastname, email, role, password} = req.body;
-    userServices.addUser(username, fullname, lastname, email, role, password).then((userCreated:User) => {
+    const {username, email, password} = req.body;
+    userServices.addUser(username, email, password).then((userCreated:User) => {
             res.status(201).send(userCreated)
     }).catch((err:any) => {
         res.status(400).json({error: err.message})

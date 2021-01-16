@@ -8,4 +8,7 @@ export default {
         password: process.env.MYSQL_PASS || '',
         database: process.env.MYSQL_DB || 'catalog_project',
     },
+    jwt: {
+        secretkey: process.env.SECRET_KEY || 'notesecret!'
+    }
 }

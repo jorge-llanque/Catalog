@@ -1,24 +1,27 @@
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcrypt';
 
 export type User = {
     id: string,
-    fullname: string,
-    lastname: string,
     username: string,
-    password: string
     email: string,
+    password: string
     role: string,
-
 }
 
-export function createUser(username: string, fullname: string, lastname: string, email: string, role:string, password:string): User{
+function encryptPassword(pass: string): string{
+    const saltRounds: number = 10;
+    const salt: any = bcrypt.genSaltSync(saltRounds);
+    const hash: string = bcrypt.hashSync(pass, salt);
+    return hash;
+}
+
+export function createUser(username: string, email: string, password:string): User{
     return {
         id: uuidv4(),
-        username: username, 
-        fullname: fullname, 
-        lastname: lastname, 
+        username: username,
         email: email, 
-        role: role, 
-        password: password
+        password: encryptPassword(password),
+        role: 'guest'
     }
 }

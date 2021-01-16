@@ -11,7 +11,15 @@ export function getUserById(id: string): Promise<User>{
     }
 }
 
-export function updateUser(id:string, body:object): Promise<User>{
+export function getUserByUsername(name: string): Promise<any>{
+    try {
+        return repository.getDataByUsername(table, name);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+export function updateUser(id:string, body: object): Promise<User>{
     try {
         return repository.updateDataById(table, id, body);
     } catch (error) {
@@ -24,9 +32,9 @@ export function removeUser(id:string):Promise<void>{
     return Promise.resolve()
 }
 
-export function addUser(username:string, fullname:string, lastname:string, email:string, role:string, password:string):Promise<User>{
+export function addUser(username:string, email:string, password:string):Promise<User>{
     try {
-        const userToSave = createUser(username, fullname, lastname, email, role, password);
+        const userToSave = createUser(username, email, password);
         return repository.insertNewData(table, userToSave);
     } catch (error) {
         return Promise.reject(error);
@@ -43,6 +51,7 @@ export function logout():any{
 
 export default {
     getUserById,
+    getUserByUsername,
     updateUser,
     removeUser,
     addUser,

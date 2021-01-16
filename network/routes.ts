@@ -1,15 +1,13 @@
-import {userController} from '../api/controllers';
-import inventory from '../api/components/inventory/network';
-import products from '../api/components/products/network';
-import rateproduct from '../api/components/rateproduct/network';
+import {userController, inventoryController, productController} from '../api/controllers';
+import authApiRouter from '../api/auth';
 import swaggerUi from 'swagger-ui-express';
 
 const swaggerDoc = require('../swagger.json');
 
 export default function(server:any){
     server.use('/api/user', userController);
-    server.use('/api/inventory', inventory);
-    server.use('/api/products', products);
-    server.use('/api/rateproduct', rateproduct);
+    server.use('/api/auth', authApiRouter);
+    server.use('/api/inventories', inventoryController);
+    server.use('/api/products', productController);
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 }

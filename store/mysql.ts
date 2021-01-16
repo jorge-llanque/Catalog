@@ -1,7 +1,7 @@
 import { rejects } from 'assert';
 import mysql from 'mysql';
 import config from '../config';
-import {User} from '../core/models';
+import {User, InventoryItem, Product} from '../core/models';
 
 const dbconfig:any = {
     host: config.mysql.host,
@@ -45,7 +45,7 @@ export function getDataById(table:string, id:string): Promise<User>{
     })
 }
 
-export function updateDataById(table:string, id:string, newData:any): Promise<User>{
+export function updateDataById(table:string, id:string, newData:any): Promise<any>{
     return new Promise((resolve, reject) => {
         connection.query(`UPDATE ${table} SET ? WHERE id=?`, [newData, id], (err:string, result:any) => {
             if(err) return reject(err);
@@ -63,7 +63,7 @@ export function deleteDataById(table:string, id:string):Promise<void>{
     })
 }
 
-export function insertNewData(table: string, data: User):Promise<User>{
+export function insertNewData(table: string, data: User | InventoryItem | Product):Promise<any>{
     return new Promise((resolve, reject) => {
         connection.query(`INSERT INTO ${table} SET ?`, data, (err: string, data:any) => {
             if(err) return reject(err);
@@ -71,16 +71,41 @@ export function insertNewData(table: string, data: User):Promise<User>{
         })
     })
 }
-/* ************************ */
 
-function listdata(table:string){
+export function listData(table:string): Promise<any[]>{
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table}`, (err:string, data:string) => {
+        connection.query(`SELECT * FROM ${table}`, (err:string, data:any) => {
             if(err) return reject(err);
             resolve(data);
         })
     })
 }
+
+export function refreshRating(table:string, data:any): Promise<any>{
+    return new Promise((resolve, reject) => {
+        connection.query("UPDATE `products` SET `like`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 1 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + "), `unlike`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 0 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + ") WHERE `id` = " + "'" + data.productId + "'" + "", (err:string, result:string) => {
+            if(err) return reject(err);
+            console.log(err);
+            resolve(data);
+        })
+    })
+}
+
+export function getDataByUsername(table:string, username:string): Promise<any>{
+    return new Promise((resolve, reject) => {
+        connection.query("SELECT * FROM " + table + " WHERE `username` =" + "'" + username +"'", (err:string, data:string) => {
+            console.log(err, 'err');
+            console.log(data, 'data');
+            if(err) return reject(err);
+            resolve(data);
+        })
+    })
+}
+
+
+
+/* ************************ */
+
 
 function get(table:string, id:string){
     return new Promise((resolve, reject) => {
@@ -101,14 +126,7 @@ function removeItem(table:string, id:string){
     })
 }
 
-function getByUsername(table:string, username:string){
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table} WHERE username = ${username}`, (err:string, data:string) => {
-            if(err) return reject(err);
-            resolve(data);
-        })
-    })
-}
+
 
 function insert(table:string, data:any){
     return new Promise((resolve, reject) => {
@@ -129,17 +147,9 @@ function update(table:string, data:any){
     })
 }
 
-function refreshRating(table:string, data:any){
-    return new Promise((resolve, reject) => {
-        connection.query("UPDATE `products` SET `like`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 1 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + "), `unlike`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 0 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + ") WHERE `id` = " + "'" + data.productId + "'" + "", (err:string, result:string) => {
-            if(err) return reject(err);
-            console.log(err);
-            resolve(data);
-        })
-    })
-}
 
-function query(table:string, query:string, join:any){
+
+function query(table:string, query:string, join?:any){
     let joinQuery = '';
     if(join){
         const key = Object.keys(join)[0];
@@ -148,6 +158,7 @@ function query(table:string, query:string, join:any){
     }
     return new Promise((resolve, reject) => {
         connection.query(`SELECT * FROM ${table} ${joinQuery} WHERE ${table}.?`, query, (err:string, res:string) => {
+            console.log(err, "error desde mysql");
             if(err) return reject(err);
             resolve(res[0] || null);
         })
@@ -160,12 +171,11 @@ module.exports = {
     updateDataById,
     deleteDataById,
     insertNewData,
-    listdata,
+    getDataByUsername,
+    listData,
     get,
-    getByUsername,
     insert,
     update,
     removeItem,
-    refreshRating,
-    query
+    refreshRating
 }
