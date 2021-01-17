@@ -8,7 +8,11 @@ export type User = {
     password: string
     role: string,
 }
-
+export enum RoleUser {
+    Writer = 'writer',
+    Customer = 'customer',
+    Admin = 'admin'
+}
 function encryptPassword(pass: string): string{
     const saltRounds: number = 10;
     const salt: any = bcrypt.genSaltSync(saltRounds);
@@ -22,6 +26,6 @@ export function createUser(username: string, email: string, password:string): Us
         username: username,
         email: email, 
         password: encryptPassword(password),
-        role: 'guest'
+        role: RoleUser.Customer
     }
 }

@@ -5,6 +5,7 @@ import config from '../../config';
 
 const router: Router = express.Router();
 
+// BASIC STRATEGY
 require('../../utils/auth/strategies/basic');
 
 router.post('/token', token);
@@ -21,7 +22,7 @@ function token(req:Request, res:Response){
                     return error;
                 }
 
-                const payload = {sub: user.username, email: user.email};
+                const payload = {sub: user.username, id: user.id, email: user.email, role: user.role};
                 const token = jwt.sign(payload, config.jwt.secretkey, {
                     expiresIn: "1h"
                 });

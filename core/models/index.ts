@@ -1,4 +1,4 @@
-import { User, createUser } from './user';
+import { User, createUser, RoleUser} from './user';
 import {InventoryItem, createItemForInventory} from './inventoryitem';
 import {Product, createProductForSave, Rate, saveRating} from './product';
 
@@ -10,5 +10,6 @@ export {
     Product,
     createProductForSave,
     Rate,
-    saveRating
+    saveRating,
+    RoleUser
 }

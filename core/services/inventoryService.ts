@@ -25,6 +25,7 @@ export function updateItem(id:string, data:object):Promise<InventoryItem>{
 }
 
 export function removeItem(id:string):Promise<void>{
+    repository.deleteDataById('products', id);
     repository.deleteDataById(table, id);
     return Promise.resolve();
 }

@@ -1,13 +1,14 @@
 import express, {Router, Request, Response} from 'express';
 /* const response = require('../../network/response'); */
-import { User } from '../../core/models';
+import { User, RoleUser } from '../../core/models';
 import { userServices } from '../../core/services';
+import { authorize } from '../../utils/middlewares/validateRole';
 
 const router:Router = express.Router();
 
-router.get('/:id', getUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.get('/:id', authorize([RoleUser.Admin]), getUser);
+router.put('/:id',  authorize([RoleUser.Admin]), updateUser);
+router.delete('/:id',  authorize([RoleUser.Admin]), deleteUser);
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/logout', logoutUser);

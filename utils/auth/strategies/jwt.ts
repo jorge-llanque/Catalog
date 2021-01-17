@@ -12,6 +12,7 @@ passport.use(
         async function(tokenPayload, cb){
             try {
                 const user: any = await userServices.getUserByUsername(tokenPayload.sub)
+                console.log(user, 'auth/strategies/jwt');
                 if(!user){
                     return cb("unauthorizated", false);
                 }

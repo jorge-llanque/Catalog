@@ -37,6 +37,7 @@ function createRating(idProduct: string, valueRate: number, idUser: string, idRa
 
 export function saveRating(idProduct: string, rate: Rate, idUser: string, idRating?: string): RateProduct{
   
+
     const valueRate: number = ('like'.includes(rate)) ? 1 : 0;
     if(idRating){
         return createRating(idProduct, valueRate, idUser, idRating);

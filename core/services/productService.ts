@@ -1,5 +1,6 @@
 import repository = require('../../store/mysql');
 import {Product, createProductForSave, Rate, saveRating} from '../models';
+import decode  = require('../../utils/auth/decodeHeader');
 
 const table:string = 'products';
 
@@ -15,6 +16,7 @@ export function addProduct(item: string):Promise<Product>{
         return Promise.reject(error);
     }
 }
+
 
 export function saveImage(id: string):Promise<void>{
     try {
@@ -32,15 +34,18 @@ export function removeProduct(id: string): Promise<void>{
     return Promise.resolve();
 }
 
-export function rateProduct(productId: string, rate:Rate, data: any): Promise<void>{
+export function rateProduct(data: any): Promise<void>{
     try {
-        if(!data.idRating){
-            const addRating: any = saveRating(productId, rate, data.userId);
+        
+        const user:any = decode.decodeHeader(data.authorization);
+
+        if(!data.ratingId){
+            const addRating: any = saveRating(data.id, data.rate, user.id);
             repository.insertNewData('rateproduct', addRating);
             return repository.refreshRating(table, addRating);
         }else{
-            const addRating: any = saveRating(productId, rate, data.userId, data.idRating);
-            repository.updateDataById('rateproduct', data.idRating, addRating);
+            const addRating: any = saveRating(data.id, data.rate, user.id, data.ratingId);
+            repository.updateDataById('rateproduct', data.ratingId, addRating);
             return repository.refreshRating(table, addRating);
         }
         
@@ -49,11 +54,7 @@ export function rateProduct(productId: string, rate:Rate, data: any): Promise<vo
     }
     
 }
-export function unRateProduct(idRating: string, productId: string): Promise<void>{
-
-    const data = {
-        productId: productId
-    }
+export function unRateProduct(idRating: string, data: any): Promise<void>{
     Promise.resolve(repository.deleteDataById('rateproduct', idRating));
     Promise.resolve(repository.refreshRating(table, data));
     return Promise.resolve();
