@@ -6,9 +6,7 @@ import { userServices } from '../../../core/services';
 passport.use(
     new BasicStrategy(async function(username, password, cb){
         try {
-            console.log(username, password, 'prueba');
             const [user]: any = await userServices.getUserByUsername(username);
-            console.log(user, "en auth/strategies/basic");
 
             if(!user) {
                 return cb("unauthorized", false)

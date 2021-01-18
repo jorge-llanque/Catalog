@@ -1,8 +1,10 @@
 import express, {Router, Request, Response} from 'express'
 import passport from 'passport';
 import {productServices} from '../../core/services';
-import {Product, RoleUser} from '../../core/models';
+import {RoleUser} from '../../core/models';
 import { authorize } from '../../utils/middlewares/validateRole';
+import validationHandler from '../../utils/middlewares/validationHandler';
+import { createProductSchema, productIdSchema } from '../../utils/schemes/productsSchema';
 
 const router:Router = express.Router();
 
@@ -11,53 +13,70 @@ require('../../utils/auth/strategies/jwt');
 
 let auth: any = passport.authenticate("jwt", {session: false})
 
-router.get('/', getProducts);
-router.post('/', auth, authorize([RoleUser.Writer, RoleUser.Admin]), createProduct);
-router.put('/:id/updateImage', authorize([RoleUser.Writer, RoleUser.Admin]), auth, updateImage);
-router.delete('/:id', auth, authorize([RoleUser.Writer, RoleUser.Admin]), deleteProduct);
-router.post('/:id/like', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), like);
-router.post('/:id/unlike', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), unlike);
-router.delete('/:idRating/unrate', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), unrate);
+router.get('/', auth, getProducts);
+router.post('/', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
+            validationHandler(createProductSchema), createProduct);
+router.put('/:id/updateImage', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
+            validationHandler({id: productIdSchema}, 'params'), updateImage);
+router.delete('/:id', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
+            validationHandler({id: productIdSchema}, 'params'), deleteProduct);
+router.post('/:id/like', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]),
+            validationHandler({id: productIdSchema}, 'params'), like);
+router.post('/:id/unlike', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), 
+            validationHandler({id:productIdSchema}, 'params'), unlike);
+router.delete('/:idRating/unrate', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), 
+            validationHandler({idRating:productIdSchema}, 'params'), unrate);
 
 
 
-function getProducts(req:Request, res:Response){
+function getProducts(req:Request, res:Response, next: any){
     productServices.getAllProduct().then((list:object) => {
-        res.status(200).send(list);
-    }).catch((err:any) => {
-        res.status(400).json({error: err.message})
+        res.status(200).json({
+            message: "products listed",
+            data: list
+        });
+    }).catch((err: any) => {
+        next(err)
     });
 }
 
-function createProduct(req:Request, res:Response){
+function createProduct(req:Request, res:Response, next: any){
     const {idInventoryItems} = req.body
-    productServices.addProduct(idInventoryItems).then((productAdded: Product) => {
-        res.status(201).send(productAdded);
+    productServices.addProduct(idInventoryItems).then((productId: any) => {
+        res.status(201).json({
+            message: 'Product added',
+            data: productId
+        })
     }).catch((err: any) => {
-        res.status(400).json({error: err.message})
+        next(err);
     });
 }
 
-function updateImage(req:Request, res:Response){
+function updateImage(req:Request, res:Response, next: any){
     const {id} = req.params;
-    productServices.saveImage(id).then(() => {
-        res.status(200).send();
-    }).catch((err:any) => {
-        console.log(err)
-        res.status(400).json({error: err.message})
-    });
-}
-
-function deleteProduct(req:Request, res:Response){
-    const {id} = req.params;
-    productServices.removeProduct(id).then(() => {
-        res.status(200).send()
+    productServices.saveImage(id).then((productId: any) => {
+        res.status(200).json({
+            message: 'Product updated',
+            data: productId
+        })
     }).catch((err: any) => {
-        res.status(400).json({error: err.message})
+        next(err);
     });
 }
 
-function like(req:Request, res:Response){
+function deleteProduct(req:Request, res:Response, next: any){
+    const {id} = req.params;
+    productServices.removeProduct(id).then((productIdDeleted: any) => {
+        res.status(200).json({
+            message: 'Product deleted',
+            data: productIdDeleted
+        })
+    }).catch((err: any) => {
+        next(err);
+    });
+}
+
+function like(req:Request, res:Response, next: any){
     const id: string = req.params.id;
     const authorization: string | undefined = req.headers.authorization;
     const ratingId: string | undefined = req.body.ratingId;
@@ -69,13 +88,16 @@ function like(req:Request, res:Response){
         ratingId,
         rate
     }
-    productServices.rateProduct(data).then(() => {
-        res.status(204).send()
+    productServices.rateProduct(data).then((productRated) => {
+        res.status(200).json({
+            message: 'Product rated',
+            data: productRated
+        })
     }).catch((err:any) => {
-        res.status(400).json({error: err.message})
+        next(err);
     });
 }
-function unlike(req:Request, res:Response){
+function unlike(req:Request, res:Response, next: any){
 
     const id: string = req.params.id;
     const authorization: string | undefined = req.headers.authorization;
@@ -88,20 +110,25 @@ function unlike(req:Request, res:Response){
         ratingId,
         rate
     }
-    productServices.rateProduct(data).then(() => {
-        res.status(204).send()
+    productServices.rateProduct(data).then((productRated) => {
+        res.status(200).json({
+            message: 'Product rated',
+            data: productRated
+        })
     }).catch((err:any) => {
-        res.status(400).json({error: err.message})
+        next(err);
     });
 }
-function unrate(req:Request, res:Response){
+
+function unrate(req:Request, res:Response, next: any){
     const {idRating} = req.params;
-    const authorization: string | undefined = req.headers.authorization;
-    const data: object = {authorization}
-    productServices.unRateProduct(idRating, data).then(() => {
-        res.status(204).send()
+    productServices.unRateProduct(idRating).then((ratingId) => {
+        res.status(200).json({
+            message: 'Product unrated',
+            data: ratingId
+        })
     }).catch((err:any) => {
-        res.status(400).json({error: err.message})
+        next(err);
     });
 }
 

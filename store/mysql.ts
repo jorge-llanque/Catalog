@@ -47,27 +47,27 @@ export function getDataById(table:string, id:string): Promise<User>{
 
 export function updateDataById(table:string, id:string, newData:any): Promise<any>{
     return new Promise((resolve, reject) => {
-        connection.query(`UPDATE ${table} SET ? WHERE id=?`, [newData, id], (err:string, result:any) => {
-            if(err) return reject(err);
-            resolve(result);
+        connection.query(`UPDATE ${table} SET ? WHERE id=?`,[newData, id], (err:string, result: any) => {
+            if(err || (result.affectedRows == 0)) return reject(result);
+            resolve(id);
         })
     })
 }
 
-export function deleteDataById(table:string, id:string):Promise<void>{
+export function deleteDataById(table:string, id:string):Promise<any>{
     return new Promise((resolve, reject) => {
         connection.query(`DELETE FROM ${table} WHERE id="${id}"`, (err:string, result:any) => {
             if(err) return reject(err);
-            resolve(result)
+            resolve(id);
         })
     })
 }
 
 export function insertNewData(table: string, data: User | InventoryItem | Product):Promise<any>{
     return new Promise((resolve, reject) => {
-        connection.query(`INSERT INTO ${table} SET ?`, data, (err: string, data:any) => {
+        connection.query(`INSERT INTO ${table} SET ?`, data, (err: string, result:any) => {
             if(err) return reject(err);
-            resolve(data)
+            resolve(data.id)
         })
     })
 }
@@ -85,8 +85,7 @@ export function refreshRating(table:string, data:any): Promise<any>{
     return new Promise((resolve, reject) => {
         connection.query("UPDATE `products` SET `like`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 1 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + "), `unlike`= (SELECT COUNT(`rateproduct`.`admire`) FROM `rateproduct` WHERE `admire` = 0 AND `rateproduct`.`productId` = " + "'" + data.productId + "'" + ") WHERE `id` = " + "'" + data.productId + "'" + "", (err:string, result:string) => {
             if(err) return reject(err);
-            console.log(err);
-            resolve(data);
+            resolve(data.productId);
         })
     })
 }
@@ -94,8 +93,7 @@ export function refreshRating(table:string, data:any): Promise<any>{
 export function getDataByUsername(table:string, username:string): Promise<any>{
     return new Promise((resolve, reject) => {
         connection.query("SELECT * FROM " + table + " WHERE `username` =" + "'" + username +"'", (err:string, data:string) => {
-            console.log(err, 'err');
-            console.log(data, 'data');
+            
             if(err) return reject(err);
             resolve(data);
         })

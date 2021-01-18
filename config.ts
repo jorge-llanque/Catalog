@@ -1,6 +1,7 @@
 export default {
     api:{
-        port: process.env.API_PORT || 3000
+        port: process.env.API_PORT || 3000,
+        dev: process.env.NODE_ENV
     },
     mysql:{
         host: process.env.MYSQL_HOST || 'localhost',

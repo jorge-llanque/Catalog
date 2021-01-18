@@ -5,7 +5,6 @@ export function authorize(roles: string[]) {
         roles = [roles];
     }
 
-    console.log(roles, 'middlew/validateRole roles');
     return [(req: any, res: any, next: any)=> {
         const user: any | never = decode.decodeHeader(req.headers.authorization);
         const userRole: any = user.role;

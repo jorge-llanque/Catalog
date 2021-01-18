@@ -18,20 +18,20 @@ export function addProduct(item: string):Promise<Product>{
 }
 
 
-export function saveImage(id: string):Promise<void>{
+export function saveImage(productId: string):Promise<void>{
     try {
         const data = {
             imagenUrl: '/public/newRoute'
         }
-        return repository.updateDataById(table, id, data);
+        return repository.updateDataById(table, productId, data);
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
 export function removeProduct(id: string): Promise<void>{
-    repository.deleteDataById(table, id);
-    return Promise.resolve();
+    const deleteProductId: any = repository.deleteDataById(table, id);
+    return deleteProductId;
 }
 
 export function rateProduct(data: any): Promise<void>{
@@ -54,10 +54,8 @@ export function rateProduct(data: any): Promise<void>{
     }
     
 }
-export function unRateProduct(idRating: string, data: any): Promise<void>{
-    Promise.resolve(repository.deleteDataById('rateproduct', idRating));
-    Promise.resolve(repository.refreshRating(table, data));
-    return Promise.resolve();
+export function unRateProduct(idRating: string): Promise<void>{
+    return repository.deleteDataById('rateproduct', idRating);
 }
 
 export default {

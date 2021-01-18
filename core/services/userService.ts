@@ -1,4 +1,4 @@
-import { User, createUser } from '../models';
+import { User, createUser, updatePassword } from '../models';
 import repository = require('../../store/mysql');
 
 const table: string = 'user';
@@ -19,8 +19,11 @@ export function getUserByUsername(name: string): Promise<any>{
     }
 }
 
-export function updateUser(id:string, body: object): Promise<User>{
+export function updateUser(id:string, body: any): Promise<User>{
     try {
+        if(body.password){
+            body.password = updatePassword(body.password);
+        }
         return repository.updateDataById(table, id, body);
     } catch (error) {
         return Promise.reject(error);
@@ -28,8 +31,8 @@ export function updateUser(id:string, body: object): Promise<User>{
 }
 
 export function removeUser(id:string):Promise<void>{
-    repository.deleteDataById(table, id);
-    return Promise.resolve()
+    return repository.deleteDataById(table, id);
+    
 }
 
 export function addUser(username:string, email:string, password:string):Promise<User>{
@@ -41,20 +44,10 @@ export function addUser(username:string, email:string, password:string):Promise<
     }
 }
 
-export function authenticate(username:string, password:string):Promise<void>{
-    return Promise.resolve()
-}
-
-export function logout():any{
-    return 'Logout';
-}
-
 export default {
     getUserById,
     getUserByUsername,
     updateUser,
     removeUser,
-    addUser,
-    authenticate,
-    logout
+    addUser
 }

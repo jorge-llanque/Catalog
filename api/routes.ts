@@ -1,5 +1,5 @@
-import {userController, inventoryController, productController} from '../api/controllers';
-import authApiRouter from '../api/auth';
+import {userController, inventoryController, productController} from './controllers';
+import authApiRouter from './auth';
 import swaggerUi from 'swagger-ui-express';
 
 const swaggerDoc = require('../swagger.json');

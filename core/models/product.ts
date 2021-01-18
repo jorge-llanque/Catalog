@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export type Rate = 'like' | 'unlike' | 'unrate';
-export type Product = {
+
+export interface Product {
     id: string,
     idInventoryItems: string,
     imagenUrl: string,
@@ -9,7 +10,7 @@ export type Product = {
     unlike: number 
 }
 
-type RateProduct = {
+interface RateProduct {
     id: string,
     userId: string,
     productId: string,

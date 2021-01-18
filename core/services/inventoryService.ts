@@ -16,8 +16,9 @@ export function addItem(name: string, description: string):Promise<InventoryItem
     }
 }
 
-export function updateItem(id:string, data:object):Promise<InventoryItem>{
+export function updateItem(id:string, data: object ):Promise<InventoryItem>{
     try {
+        console.log(data, 'updateItem');
         return repository.updateDataById(table, id, data);
     } catch (error) {
         return Promise.reject(error);
