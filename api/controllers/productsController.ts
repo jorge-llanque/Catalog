@@ -1,10 +1,11 @@
-import express, {Router, Request, Response} from 'express'
+import express, {Router, Request, Response, NextFunction} from 'express'
 import passport from 'passport';
 import {productServices} from '../../core/services';
 import {RoleUser} from '../../core/models';
 import { authorize } from '../../utils/middlewares/validateRole';
 import validationHandler from '../../utils/middlewares/validationHandler';
 import { createProductSchema, productIdSchema } from '../../utils/schemes/productsSchema';
+import cpUpload from '../../utils/middlewares/uploadFiles';
 
 const router:Router = express.Router();
 
@@ -17,7 +18,7 @@ router.get('/', auth, getProducts);
 router.post('/', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
             validationHandler(createProductSchema), createProduct);
 router.put('/:id/updateImage', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
-            validationHandler({id: productIdSchema}, 'params'), updateImage);
+            validationHandler({id: productIdSchema}, 'params'), cpUpload,updateImage);
 router.delete('/:id', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
             validationHandler({id: productIdSchema}, 'params'), deleteProduct);
 router.post('/:id/like', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]),
@@ -29,7 +30,7 @@ router.delete('/:idRating/unrate', auth, authorize([RoleUser.Customer, RoleUser.
 
 
 
-function getProducts(req:Request, res:Response, next: any){
+function getProducts(req:Request, res:Response, next: NextFunction){
     productServices.getAllProduct().then((list:object) => {
         res.status(200).json({
             message: "products listed",
@@ -40,7 +41,7 @@ function getProducts(req:Request, res:Response, next: any){
     });
 }
 
-function createProduct(req:Request, res:Response, next: any){
+function createProduct(req:Request, res:Response, next: NextFunction){
     const {idInventoryItems} = req.body
     productServices.addProduct(idInventoryItems).then((productId: any) => {
         res.status(201).json({
@@ -52,9 +53,11 @@ function createProduct(req:Request, res:Response, next: any){
     });
 }
 
-function updateImage(req:Request, res:Response, next: any){
+function updateImage(req:Request, res:Response, next: NextFunction){
     const {id} = req.params;
-    productServices.saveImage(id).then((productId: any) => {
+    const image = req.files;
+    
+    productServices.saveImage(id, image).then((productId: any) => {
         res.status(200).json({
             message: 'Product updated',
             data: productId
@@ -64,7 +67,7 @@ function updateImage(req:Request, res:Response, next: any){
     });
 }
 
-function deleteProduct(req:Request, res:Response, next: any){
+function deleteProduct(req:Request, res:Response, next: NextFunction){
     const {id} = req.params;
     productServices.removeProduct(id).then((productIdDeleted: any) => {
         res.status(200).json({
@@ -76,7 +79,7 @@ function deleteProduct(req:Request, res:Response, next: any){
     });
 }
 
-function like(req:Request, res:Response, next: any){
+function like(req:Request, res:Response, next: NextFunction){
     const id: string = req.params.id;
     const authorization: string | undefined = req.headers.authorization;
     const ratingId: string | undefined = req.body.ratingId;
@@ -97,7 +100,7 @@ function like(req:Request, res:Response, next: any){
         next(err);
     });
 }
-function unlike(req:Request, res:Response, next: any){
+function unlike(req:Request, res:Response, next: NextFunction){
 
     const id: string = req.params.id;
     const authorization: string | undefined = req.headers.authorization;
@@ -120,7 +123,7 @@ function unlike(req:Request, res:Response, next: any){
     });
 }
 
-function unrate(req:Request, res:Response, next: any){
+function unrate(req:Request, res:Response, next: NextFunction){
     const {idRating} = req.params;
     productServices.unRateProduct(idRating).then((ratingId) => {
         res.status(200).json({

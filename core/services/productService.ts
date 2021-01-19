@@ -1,6 +1,7 @@
 import repository = require('../../store/mysql');
 import {Product, createProductForSave, Rate, saveRating} from '../models';
 import decode  = require('../../utils/auth/decodeHeader');
+import config from '../../config';
 
 const table:string = 'products';
 
@@ -18,10 +19,10 @@ export function addProduct(item: string):Promise<Product>{
 }
 
 
-export function saveImage(productId: string):Promise<void>{
+export function saveImage(productId: string, image: any):Promise<void>{
     try {
         const data = {
-            imagenUrl: '/public/newRoute'
+            imagenUrl: image[0].path
         }
         return repository.updateDataById(table, productId, data);
     } catch (error) {

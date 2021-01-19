@@ -1,5 +1,6 @@
 export default {
     api:{
+        host: process.env.HOST || 'http://localhost',
         port: process.env.API_PORT || 3000,
         dev: process.env.NODE_ENV
     },
@@ -11,5 +12,9 @@ export default {
     },
     jwt: {
         secretkey: process.env.SECRET_KEY || 'notesecret!'
+    },
+    files: {
+        publicRoute: process.env.PUBLIC_ROUTE || '/app',
+        filesRoute: process.env.PUBLIC_ROUTE || 'files'
     }
 }

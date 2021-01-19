@@ -1,4 +1,4 @@
-import express, {Router, Request, Response} from 'express';
+import express, {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
 import { User, RoleUser } from '../../core/models';
 import { userServices } from '../../core/services';
@@ -19,7 +19,7 @@ router.put('/:id', auth,
 router.delete('/:id', auth, validationHandler({id: userIdSchema}, 'params'), deleteUser);
 router.post('/register', validationHandler(createUserSchema), registerUser);
 
-function getUser(req:Request, res:Response, next: any){
+function getUser(req:Request, res:Response, next: NextFunction){
     const {id} = req.params;
     userServices.getUserById(id).then((user: User) => {
             res.status(200).json({
@@ -31,7 +31,7 @@ function getUser(req:Request, res:Response, next: any){
         });
 }
 
-function updateUser(req:Request, res:Response, next: any){
+function updateUser(req:Request, res:Response, next: NextFunction){
     const {id} = req.params;
     const body: object = req.body;
     userServices.updateUser(id, body).then((userId:User) => {
@@ -44,7 +44,7 @@ function updateUser(req:Request, res:Response, next: any){
     });
 }
 
-function deleteUser(req:Request, res:Response, next: any){
+function deleteUser(req:Request, res:Response, next: NextFunction){
     const {id} = req.params;
     userServices.removeUser(id).then((userIdDeleted)=> {
         res.status(200).json({
@@ -56,7 +56,7 @@ function deleteUser(req:Request, res:Response, next: any){
     });
 }
 
-function registerUser(req:Request, res:Response, next: any){
+function registerUser(req:Request, res:Response, next: NextFunction){
     const {username, email, password} = req.body;
     userServices.addUser(username, email, password).then((userIdCreated: any) => {
             res.status(201).json({

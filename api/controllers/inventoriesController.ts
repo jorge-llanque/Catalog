@@ -1,4 +1,4 @@
-import express, {Router, Request, Response} from 'express';
+import express, {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
 import {inventoryServices} from '../../core/services';
 import { InventoryItem, RoleUser } from '../../core/models';
@@ -23,7 +23,7 @@ router.put('/:id', auth, authorize([RoleUser.Admin, RoleUser.Writer, RoleUser.Cu
             editItem);
 
 
-function getInventoryItems(req:Request, res:Response, next: any){
+function getInventoryItems(req:Request, res:Response, next: NextFunction){
     inventoryServices.getAllInventoryItems().then((list:object)=>{
         res.status(200).json({
             message: "movies listed",
@@ -34,7 +34,7 @@ function getInventoryItems(req:Request, res:Response, next: any){
     });
 }
 
-function createItem(req:Request, res:Response, next: any){
+function createItem(req:Request, res:Response, next: NextFunction){
     const {name, description} = req.body;
     inventoryServices.addItem(name, description).then((itemId: any) => {
         res.status(201).json({
@@ -46,7 +46,7 @@ function createItem(req:Request, res:Response, next: any){
     });
 }
 
-function editItem(req:Request, res:Response, next: any){
+function editItem(req:Request, res:Response, next: NextFunction){
     const {id} = req.params;
     inventoryServices.updateItem(id, req.body).then((itemId: any) => {
         res.status(200).json({

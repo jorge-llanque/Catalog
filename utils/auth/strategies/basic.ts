@@ -1,6 +1,6 @@
 import passport from 'passport';
 import {BasicStrategy} from 'passport-http';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { userServices } from '../../../core/services';
 
 passport.use(
@@ -12,7 +12,7 @@ passport.use(
                 return cb("unauthorized", false)
             }
 
-            if(!(await bcrypt.compare(password, user.password))){
+            if(!(await bcrypt.compareSync(password, user.password))){
                 return cb("unauthorized", false)
             }
 
