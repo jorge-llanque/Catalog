@@ -6,10 +6,10 @@ import config from '../../config';
 const table:string = 'products';
 
 export function getAllProduct():Promise<Product[]>{
-    return repository.listData(table);
+    return Promise.resolve(repository.listData(table));
 }
 
-export function addProduct(item: string):Promise<Product>{
+export function addProduct(item: string):Promise<string>{
     try {
         const productToSave = createProductForSave(item);
 
@@ -22,32 +22,28 @@ export function addProduct(item: string):Promise<Product>{
                 return Promise.resolve(repository.insertNewData(table, productToSave));
             }
         })
-        /* if(idInventoryExists) return Promise.reject('Inventory Item Exists') */
-
-        
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
 
-export function saveImage(productId: string, image: any):Promise<void>{
+export function saveImage(productId: string, image: any):Promise<string>{
     try {
         const data = {
             imagenUrl: image[0].path
         }
-        return repository.updateDataById(table, productId, data);
+        return Promise.resolve(repository.updateDataById(table, productId, data));
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function removeProduct(productId: string): Promise<void>{
-    const deleteProductId: any = repository.deleteDataById(table, productId);
-    return deleteProductId;
+export function removeProduct(productId: string): Promise<string>{
+    return Promise.resolve(repository.deleteDataById(table, productId));
 }
 
-export function rateProduct(data: any): Promise<void>{
+export function rateProduct(data: any): Promise<string>{
     try {
         
         const user:any = decode.decodeHeader(data.authorization);
@@ -67,7 +63,7 @@ export function rateProduct(data: any): Promise<void>{
     }
     
 }
-export function unRateProduct(idRating: string): Promise<void>{
+export function unRateProduct(idRating: string): Promise<string>{
     return repository.deleteDataById('rateproduct', idRating);
 }
 

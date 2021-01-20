@@ -15,29 +15,29 @@ export function getUserById(token: any): Promise<User>{
 
 export function getUserByUsername(name: string): Promise<any>{
     try {
-        return repository.getDataByUsername(table, name);
+        return Promise.resolve(repository.getDataByUsername(table, name));
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function updateUser(token: any, body: any): Promise<User>{
+export function updateUser(token: any, values: object): Promise<string>{
     try {
         const user: any = decode.decodeHeader(token);
-        const userToSave = updateNewAttributes(body);
+        const userToSave: object = updateNewAttributes(values);
         return repository.updateDataById(table, user.id, userToSave);
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function removeUser(token: any):Promise<void>{
+export function removeUser(token: any):Promise<string>{
     const user: any = decode.decodeHeader(token);
     return repository.deleteDataById(table, user.id);
     
 }
 
-export function addUser(username:string, email:string, password:string):Promise<User>{
+export function addUser(username: string, email: string, password: string):Promise<string>{
     try {
         const userToSave = createUser(username, email, password);
         return repository.insertNewData(table, userToSave);

@@ -9,7 +9,7 @@ export interface User {
     role: string,
 }
 
-export enum RoleUser {
+export enum Role {
     Writer = 'writer',
     Customer = 'customer',
     Admin = 'admin'
@@ -28,7 +28,7 @@ export function createUser(username: string, email: string, password:string): Us
         username: username,
         email: email, 
         password: encryptPassword(password),
-        role: RoleUser.Customer
+        role: Role.Customer
     }
 }
 

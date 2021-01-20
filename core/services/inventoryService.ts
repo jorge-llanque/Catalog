@@ -4,10 +4,10 @@ import {InventoryItem, createItemForInventory} from '../models';
 const table:string = 'inventory';
 
 export function getAllInventoryItems(): Promise<InventoryItem[]>{
-    return repository.listData(table);
+    return Promise.resolve(repository.listData(table));
 }
 
-export function addItem(name: string, description: string):Promise<InventoryItem>{
+export function addItem(name: string, description: string):Promise<string>{
     try {
         const itemToSave = createItemForInventory(name, description);
         return repository.insertNewData(table, itemToSave);
@@ -16,15 +16,15 @@ export function addItem(name: string, description: string):Promise<InventoryItem
     }
 }
 
-export function updateItem(itemId:string, data: object ):Promise<InventoryItem>{
+export function updateItem(itemId:string, values: object ):Promise<string>{
     try {
-        return repository.updateDataById(table, itemId, data);
+        return repository.updateDataById(table, itemId, values);
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function removeItem(itemId:string):Promise<void>{
+export function removeItem(itemId:string):Promise<string>{
     try {
         return repository.deleteDataById(table, itemId);
     } catch (error) {

@@ -73,10 +73,10 @@ export function insertNewData(table: string, data: User | InventoryItem | Produc
 }
 
 export function listData(table:string): Promise<any[]>{
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table}`, (err:string, data:any) => {
-            if(err) return reject(err);
-            resolve(data);
+    return new Promise<any>((resolve, reject) => {
+        connection.query(`SELECT * FROM ${table}`, (error: string, result: any) => {
+            if(error) reject(error)
+            resolve(result)
         })
     })
 }
@@ -90,15 +90,16 @@ export function refreshRating(table:string, data:any): Promise<any>{
     })
 }
 
-export function getDataByUsername(table:string, username:string): any{
+export function getDataByUsername(table:string, username:string): Promise<any>{
     console.log(username, 'mysql/username')
     return new Promise((resolve, reject) => {
         connection.query("SELECT * FROM " + table + " WHERE `username` = BINARY " + "'" + username +"'", (err: any, result: any) => {
             
             console.log(result.length, 'mysql/result');
+
             if(result.length == 0) {
                 console.log('error validado')
-                err = Error('No exists data to matching')
+                err = Error('No exists user to matching')
                 return reject(err)
                 /* reject(new Error('no exists data')) */
             }else {
@@ -117,28 +118,6 @@ export function getDataByInventoryItem(table:string, column:string): Promise<any
         })
     })
 }
-
-
-
-
-
-/* ************************ */
-/* 
-function query(table:string, query:string, join?:any){
-    let joinQuery = '';
-    if(join){
-        const key = Object.keys(join)[0];
-        const val = join[key];
-        joinQuery = `JOIN ${key} ON ${table}.${val} = ${key}.id`;
-    }
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table} ${joinQuery} WHERE ${table}.?`, query, (err:string, res:string) => {
-            console.log(err, "error desde mysql");
-            if(err) return reject(err);
-            resolve(res[0] || null);
-        })
-    })
-} */
 
 
 module.exports = {

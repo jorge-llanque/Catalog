@@ -10,22 +10,16 @@ passport.use(
         try {
             const [user]: any = await userServices.getUserByUsername(username)
 
-            console.log(username, password, 'username and pass')
-            console.log(user, '/basic/user')
             if(!user || user == undefined) {
-                console.log('entró al if');
                 return cb(boom.unauthorized(), false)
             }
-
             if(!(await bcrypt.compareSync(password, user.password))){
-                return cb("unauthorized", false)
+                return cb(boom.unauthorized(), false)
             }
-
+            
             return cb(null, user);
 
         } catch (error) {
-            console.log('entró al error');
-            console.log(error, 'desde error');
             return cb(error)
         }
     })
