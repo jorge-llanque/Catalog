@@ -17,10 +17,12 @@ router.get('/', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Custo
 router.post('/', auth, authorize([RoleUser.Admin, RoleUser.Customer]), 
             validationHandler(createInventorySchema), 
             createItem);
-router.put('/:id', auth, authorize([RoleUser.Admin, RoleUser.Writer, RoleUser.Customer]), 
-            validationHandler({id: inventoryIdSchema}, 'params'),
+router.put('/:itemId', auth, authorize([RoleUser.Admin, RoleUser.Writer, RoleUser.Customer]), 
+            validationHandler({itemId: inventoryIdSchema}, 'params'),
             validationHandler(updateInventorySchema), 
             editItem);
+router.delete('/:itemId', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
+            validationHandler({itemId: inventoryIdSchema}, 'params'), deleteItem);
 
 
 function getInventoryItems(req:Request, res:Response, next: NextFunction){
@@ -47,8 +49,8 @@ function createItem(req:Request, res:Response, next: NextFunction){
 }
 
 function editItem(req:Request, res:Response, next: NextFunction){
-    const {id} = req.params;
-    inventoryServices.updateItem(id, req.body).then((itemId: any) => {
+    const {itemId} = req.params;
+    inventoryServices.updateItem(itemId, req.body).then((itemId: any) => {
         res.status(200).json({
             message: 'Item updated',
             data: itemId
@@ -56,6 +58,18 @@ function editItem(req:Request, res:Response, next: NextFunction){
     }).catch((err: any) => {
         next(err);
     });
+}
+
+function deleteItem(req: Request, res: Response, next: NextFunction){
+    const {itemId} = req.params;
+    inventoryServices.removeItem(itemId).then((itemId: any) => {
+        res.status(200).json({
+            message: 'Item deleted',
+            data: itemId
+        })
+    }).catch((err: any) => {
+        next(err);
+    })
 }
 
 

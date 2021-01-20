@@ -90,63 +90,40 @@ export function refreshRating(table:string, data:any): Promise<any>{
     })
 }
 
-export function getDataByUsername(table:string, username:string): Promise<any>{
+export function getDataByUsername(table:string, username:string): any{
+    console.log(username, 'mysql/username')
     return new Promise((resolve, reject) => {
-        connection.query("SELECT * FROM " + table + " WHERE `username` =" + "'" + username +"'", (err:string, data:string) => {
+        connection.query("SELECT * FROM " + table + " WHERE `username` = BINARY " + "'" + username +"'", (err: any, result: any) => {
             
-            if(err) return reject(err);
-            resolve(data);
+            console.log(result.length, 'mysql/result');
+            if(result.length == 0) {
+                console.log('error validado')
+                err = Error('No exists data to matching')
+                return reject(err)
+                /* reject(new Error('no exists data')) */
+            }else {
+                console.log('error no validado')
+                resolve(result)
+            }
         })
     })
 }
+
+export function getDataByInventoryItem(table:string, column:string): Promise<any>{
+    return new Promise((resolve, reject) => {
+        connection.query("SELECT * FROM " + table + " WHERE idInventoryItems = BINARY " + "'" + column +"'", (err: any, result: any) => {
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}
+
+
 
 
 
 /* ************************ */
-
-
-function get(table:string, id:string){
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM ${table} WHERE id=${id}`, (err:string, data:string) => {
-            if(err) return reject(err);
-            resolve(data);
-        })
-    })
-}
-
-
-function removeItem(table:string, id:string){
-    return new Promise((resolve, reject) => {
-        connection.query(`DELETE FROM ${table} WHERE id="${id}"`, (err:string, data:string) => {
-            if(err) return reject(err);
-            resolve(data);
-        })
-    })
-}
-
-
-
-function insert(table:string, data:any){
-    return new Promise((resolve, reject) => {
-        connection.query(`INSERT INTO ${table} SET ?`, data, (err:string, result:string) => {
-            console.log(err);
-            if(err) return reject(err);
-            resolve(data);
-        })
-    })
-}
-
-function update(table:string, data:any){
-    return new Promise((resolve, reject) => {
-        connection.query(`UPDATE ${table} SET ? WHERE id=?`, [data, data.id], (err:string, result:string) => {
-            if(err) return reject(err);
-            resolve(data);
-        })
-    })
-}
-
-
-
+/* 
 function query(table:string, query:string, join?:any){
     let joinQuery = '';
     if(join){
@@ -161,7 +138,7 @@ function query(table:string, query:string, join?:any){
             resolve(res[0] || null);
         })
     })
-}
+} */
 
 
 module.exports = {
@@ -171,9 +148,6 @@ module.exports = {
     insertNewData,
     getDataByUsername,
     listData,
-    get,
-    insert,
-    update,
-    removeItem,
-    refreshRating
+    refreshRating,
+    getDataByInventoryItem
 }

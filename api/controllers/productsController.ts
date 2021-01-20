@@ -17,14 +17,14 @@ let auth: any = passport.authenticate("jwt", {session: false})
 router.get('/', auth, getProducts);
 router.post('/', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
             validationHandler(createProductSchema), createProduct);
-router.put('/:id/updateImage', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
-            validationHandler({id: productIdSchema}, 'params'), cpUpload,updateImage);
-router.delete('/:id', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
-            validationHandler({id: productIdSchema}, 'params'), deleteProduct);
-router.post('/:id/like', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]),
-            validationHandler({id: productIdSchema}, 'params'), like);
-router.post('/:id/unlike', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), 
-            validationHandler({id:productIdSchema}, 'params'), unlike);
+router.put('/:productId/updateImage', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
+            validationHandler({productId: productIdSchema}, 'params'), cpUpload,updateImage);
+router.delete('/:productId', auth, authorize([RoleUser.Writer, RoleUser.Admin, RoleUser.Customer]),
+            validationHandler({productId: productIdSchema}, 'params'), deleteProduct);
+router.post('/:productId/like', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]),
+            validationHandler({productId: productIdSchema}, 'params'), like);
+router.post('/:productId/unlike', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), 
+            validationHandler({productId:productIdSchema}, 'params'), unlike);
 router.delete('/:idRating/unrate', auth, authorize([RoleUser.Customer, RoleUser.Writer, RoleUser.Admin]), 
             validationHandler({idRating:productIdSchema}, 'params'), unrate);
 
@@ -54,10 +54,10 @@ function createProduct(req:Request, res:Response, next: NextFunction){
 }
 
 function updateImage(req:Request, res:Response, next: NextFunction){
-    const {id} = req.params;
+    const {productId} = req.params;
     const image = req.files;
     
-    productServices.saveImage(id, image).then((productId: any) => {
+    productServices.saveImage(productId, image).then((productId: any) => {
         res.status(200).json({
             message: 'Product updated',
             data: productId
@@ -68,8 +68,8 @@ function updateImage(req:Request, res:Response, next: NextFunction){
 }
 
 function deleteProduct(req:Request, res:Response, next: NextFunction){
-    const {id} = req.params;
-    productServices.removeProduct(id).then((productIdDeleted: any) => {
+    const {productId} = req.params;
+    productServices.removeProduct(productId).then((productIdDeleted: any) => {
         res.status(200).json({
             message: 'Product deleted',
             data: productIdDeleted
@@ -80,13 +80,13 @@ function deleteProduct(req:Request, res:Response, next: NextFunction){
 }
 
 function like(req:Request, res:Response, next: NextFunction){
-    const id: string = req.params.id;
+    const productId: string = req.params.productId;
     const authorization: string | undefined = req.headers.authorization;
     const ratingId: string | undefined = req.body.ratingId;
     const rate: string = 'like';
 
     const data: object = {
-        id,
+        productId,
         authorization,
         ratingId,
         rate
@@ -102,13 +102,13 @@ function like(req:Request, res:Response, next: NextFunction){
 }
 function unlike(req:Request, res:Response, next: NextFunction){
 
-    const id: string = req.params.id;
+    const productId: string = req.params.productId;
     const authorization: string | undefined = req.headers.authorization;
     const ratingId: string | undefined = req.body.ratingId;
     const rate: string = 'unlike';
 
     const data: object = {
-        id,
+        productId,
         authorization,
         ratingId,
         rate

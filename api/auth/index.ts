@@ -10,7 +10,7 @@ require('../../utils/auth/strategies/basic');
 
 router.post('/token', token);
 
-function token(req:Request, res:Response){
+function token(req:Request, res:Response, next: any){
     passport.authenticate("basic", function(error, user) {
         try {
             if(error || !user){
@@ -19,18 +19,18 @@ function token(req:Request, res:Response){
 
             req.login(user, {session: false}, async function(error){
                 if(error){
-                    return error;
+                   next(error)
                 }
 
                 const payload = {sub: user.username, id: user.id, email: user.email, role: user.role};
                 const token = jwt.sign(payload, config.jwt.secretkey, {
-                    expiresIn: "1h"
+                    expiresIn: "7d"
                 });
     
                 return res.status(200).json({access_token: token});
             });          
-        } catch (error) {
-            return error;            
+        } catch(error: any) {
+            next(error);        
         }
     })(req, res);
 }

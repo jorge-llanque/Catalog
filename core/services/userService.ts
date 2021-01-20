@@ -1,11 +1,13 @@
-import { User, createUser, updatePassword } from '../models';
+import { User, createUser, updateNewAttributes} from '../models';
 import repository = require('../../store/mysql');
+import decode = require('../../utils/auth/decodeHeader');
 
 const table: string = 'user';
 
-export function getUserById(id: string): Promise<User>{
+export function getUserById(token: any): Promise<User>{
     try {
-        return repository.getDataById(table, id);
+        const user: any = decode.decodeHeader(token);
+        return repository.getDataById(table, user.id);
     } catch (error) {
         return Promise.reject(error);
     }
@@ -19,19 +21,19 @@ export function getUserByUsername(name: string): Promise<any>{
     }
 }
 
-export function updateUser(id:string, body: any): Promise<User>{
+export function updateUser(token: any, body: any): Promise<User>{
     try {
-        if(body.password){
-            body.password = updatePassword(body.password);
-        }
-        return repository.updateDataById(table, id, body);
+        const user: any = decode.decodeHeader(token);
+        const userToSave = updateNewAttributes(body);
+        return repository.updateDataById(table, user.id, userToSave);
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function removeUser(id:string):Promise<void>{
-    return repository.deleteDataById(table, id);
+export function removeUser(token: any):Promise<void>{
+    const user: any = decode.decodeHeader(token);
+    return repository.deleteDataById(table, user.id);
     
 }
 

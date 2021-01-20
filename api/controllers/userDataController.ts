@@ -12,16 +12,14 @@ require('../../utils/auth/strategies/jwt');
 
 let auth: any = passport.authenticate("jwt", {session: false})
 
-router.get('/:id', auth, validationHandler({id: userIdSchema}, 'params'), getUser);
-router.put('/:id', auth, 
-            validationHandler({id: userIdSchema}, 'params'),
-             validationHandler(updateUserSchema), updateUser);
-router.delete('/:id', auth, validationHandler({id: userIdSchema}, 'params'), deleteUser);
+router.get('/', auth, getUser);
+router.put('/', auth, validationHandler(updateUserSchema), updateUser);
+router.delete('/', auth, deleteUser);
 router.post('/register', validationHandler(createUserSchema), registerUser);
 
 function getUser(req:Request, res:Response, next: NextFunction){
-    const {id} = req.params;
-    userServices.getUserById(id).then((user: User) => {
+    const authorization: any = req.headers.authorization
+    userServices.getUserById(authorization).then((user: User) => {
             res.status(200).json({
                 message: 'User obtained',
                 data: user
@@ -32,9 +30,9 @@ function getUser(req:Request, res:Response, next: NextFunction){
 }
 
 function updateUser(req:Request, res:Response, next: NextFunction){
-    const {id} = req.params;
+    const authorization: any = req.headers.authorization
     const body: object = req.body;
-    userServices.updateUser(id, body).then((userId:User) => {
+    userServices.updateUser(authorization, body).then((userId:User) => {
         res.status(200).json({
             message: 'User updated',
             data: userId
@@ -45,8 +43,8 @@ function updateUser(req:Request, res:Response, next: NextFunction){
 }
 
 function deleteUser(req:Request, res:Response, next: NextFunction){
-    const {id} = req.params;
-    userServices.removeUser(id).then((userIdDeleted)=> {
+    const authorization: any = req.headers.authorization
+    userServices.removeUser(authorization).then((userIdDeleted)=> {
         res.status(200).json({
             message: 'User deleted',
             data: userIdDeleted

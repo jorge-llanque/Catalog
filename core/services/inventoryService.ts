@@ -16,19 +16,20 @@ export function addItem(name: string, description: string):Promise<InventoryItem
     }
 }
 
-export function updateItem(id:string, data: object ):Promise<InventoryItem>{
+export function updateItem(itemId:string, data: object ):Promise<InventoryItem>{
     try {
-        console.log(data, 'updateItem');
-        return repository.updateDataById(table, id, data);
+        return repository.updateDataById(table, itemId, data);
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function removeItem(id:string):Promise<void>{
-    repository.deleteDataById('products', id);
-    repository.deleteDataById(table, id);
-    return Promise.resolve();
+export function removeItem(itemId:string):Promise<void>{
+    try {
+        return repository.deleteDataById(table, itemId);
+    } catch (error) {
+        return Promise.reject(error);
+    }
 }
 
 export default {

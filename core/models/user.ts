@@ -32,6 +32,14 @@ export function createUser(username: string, email: string, password:string): Us
     }
 }
 
-export function updatePassword(password: string){
-    return encryptPassword(password);
+export function updateNewAttributes(args: any): any {
+    const newValues: any = {
+        ...args
+    }
+
+    if(args.hasOwnProperty('password') && args.password != ""){
+        newValues.password = encryptPassword(args.password)
+    }
+
+    return newValues
 }
