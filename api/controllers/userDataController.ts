@@ -1,16 +1,10 @@
 import express, {Router, Request, Response, NextFunction} from 'express';
-import passport from 'passport';
 import { User } from '../../core/models';
 import { userServices } from '../../core/services';
-import validationHandler from '../../utils/middlewares/validationHandler';
-import { createUserSchema, updateUserSchema } from '../../utils/schemes/usersSchema';
+import {validationHandler, auth } from '../../utils/middlewares';
+import { createUserSchema, updateUserSchema } from '../../utils/schemes';
 
 const router:Router = express.Router();
-
-// JWT STRATEGY
-require('../../utils/auth/strategies/jwt');
-
-let auth: any = passport.authenticate("jwt", {session: false})
 
 router.get('/', auth, getUser);
 router.put('/', auth, validationHandler(updateUserSchema), updateUser);
@@ -24,20 +18,20 @@ function getUser(req:Request, res:Response, next: NextFunction){
             message: 'User obtained',
             data: user
         })
-    }).catch( (error: any) => {
+    }).catch( (error: Error) => {
         next(error);
     });
 }
 
 function updateUser(req:Request, res:Response, next: NextFunction){
-    const {authorization: authorization} = req.headers
-    const valuesForUpdate: object = req.body;
-    userServices.updateUser(authorization, valuesForUpdate).then((userId: string) => {
+    const {authorization: authorization} = req.headers;
+    const { body }= req;
+    userServices.updateUser(authorization, body).then((userId: string) => {
         res.status(200).json({
             message: 'User updated',
             data: userId
         })
-    }).catch( (error: any) => {
+    }).catch( (error: Error) => {
         next(error);
     });
 }
@@ -49,7 +43,7 @@ function deleteUser(req:Request, res:Response, next: NextFunction){
             message: 'User deleted',
             data: userIdDeleted
         })
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error);
     });
 }
@@ -61,10 +55,10 @@ function registerUser(req:Request, res:Response, next: NextFunction){
                 message: 'User created',
                 data: userIdCreated
             })
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error);
     });
 }
 
 
-export {router}
+export default router

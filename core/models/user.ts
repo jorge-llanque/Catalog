@@ -17,7 +17,7 @@ export enum Role {
 
 function encryptPassword(pass: string): string{
     const saltRounds: number = 10;
-    const salt: any = bcrypt.genSaltSync(saltRounds);
+    const salt: string = bcrypt.genSaltSync(saltRounds);
     const hash: string = bcrypt.hashSync(pass, salt);
     return hash;
 }
@@ -32,7 +32,7 @@ export function createUser(username: string, email: string, password:string): Us
     }
 }
 
-export function updateNewAttributes(args: any): any {
+export function updateNewAttributes(args: any): object {
     const newValues: any = {
         ...args
     }

@@ -18,18 +18,13 @@ function getToken(auth: any){
     return token;
 }
 
-export function decodeHeader(authorization: string){
+export default function decodeHeader(authorization: any){
     const token = getToken(authorization);
     const decoded = verify(token);
 
     return decoded;
 
 }
-
-module.exports = {
-    decodeHeader
-}
-
 
 
 

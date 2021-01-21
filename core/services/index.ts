@@ -1,3 +1,3 @@
-export {default as userServices} from './userService';
-export {default as inventoryServices} from './inventoryService';
-export {default as productServices} from './productService';
+export * as userServices from './userService';
+export * as inventoryServices from './inventoryService';
+export * as productServices from './productService';

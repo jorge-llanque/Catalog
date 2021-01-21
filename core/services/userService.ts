@@ -1,29 +1,30 @@
 import { User, createUser, updateNewAttributes} from '../models';
-import repository = require('../../store/mysql');
-import decode = require('../../utils/auth/decodeHeader');
+import {repository} from '../../store/';
+import decode from '../../utils/auth/decodeHeader';
 
 const table: string = 'user';
+const column: string = 'username';
 
 export function getUserById(token: any): Promise<User>{
     try {
-        const user: any = decode.decodeHeader(token);
-        return repository.getDataById(table, user.id);
+        const user: any = decode(token);
+        return repository.getDataByColumn(table, user.id);
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function getUserByUsername(name: string): Promise<any>{
+export function getUserByUsername(name: string): Promise<[]>{
     try {
-        return Promise.resolve(repository.getDataByUsername(table, name));
+        return Promise.resolve(repository.getDataByColumn(table, name, column));
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export function updateUser(token: any, values: object): Promise<string>{
+export function updateUser(token: string | undefined, values: object): Promise<string>{
     try {
-        const user: any = decode.decodeHeader(token);
+        const user: any = decode(token);
         const userToSave: object = updateNewAttributes(values);
         return repository.updateDataById(table, user.id, userToSave);
     } catch (error) {
@@ -31,8 +32,8 @@ export function updateUser(token: any, values: object): Promise<string>{
     }
 }
 
-export function removeUser(token: any):Promise<string>{
-    const user: any = decode.decodeHeader(token);
+export function removeUser(token: string | undefined):Promise<string>{
+    const user: any = decode(token);
     return repository.deleteDataById(table, user.id);
     
 }
@@ -44,12 +45,4 @@ export function addUser(username: string, email: string, password: string):Promi
     } catch (error) {
         return Promise.reject(error);
     }
-}
-
-export default {
-    getUserById,
-    getUserByUsername,
-    updateUser,
-    removeUser,
-    addUser
 }

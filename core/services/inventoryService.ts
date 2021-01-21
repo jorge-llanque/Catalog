@@ -1,4 +1,4 @@
-import repository = require('../../store/mysql');
+import {repository} from '../../store/';
 import {InventoryItem, createItemForInventory} from '../models';
 
 const table:string = 'inventory';
@@ -30,11 +30,4 @@ export function removeItem(itemId:string):Promise<string>{
     } catch (error) {
         return Promise.reject(error);
     }
-}
-
-export default {
-    getAllInventoryItems,
-    addItem,
-    updateItem,
-    removeItem
 }

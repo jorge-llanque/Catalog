@@ -1,8 +1,8 @@
 import passport from 'passport';
 import {BasicStrategy} from 'passport-http';
 import bcrypt from 'bcryptjs';
-import { userServices } from '../../../core/services';
 import boom from '@hapi/boom';
+import { userServices } from '../../../core/services';
 
 
 passport.use(

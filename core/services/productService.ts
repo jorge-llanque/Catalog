@@ -1,11 +1,12 @@
-import repository = require('../../store/mysql');
+import {repository} from '../../store/';
 import {Product, createProductForSave, Rate, saveRating} from '../models';
-import decode  = require('../../utils/auth/decodeHeader');
-import config from '../../config';
+import decode from '../../utils/auth/decodeHeader';
 
-const table:string = 'products';
+const table: string = 'products';
+const column: string = 'idInventoryItems';
 
 export function getAllProduct():Promise<Product[]>{
+
     return Promise.resolve(repository.listData(table));
 }
 
@@ -13,11 +14,11 @@ export function addProduct(item: string):Promise<string>{
     try {
         const productToSave = createProductForSave(item);
 
-        const idInventoryExists: any = repository.getDataByInventoryItem(table, productToSave.idInventoryItems);
+        const idInventoryExists = repository.getDataByColumn(table, productToSave.idInventoryItems, column);
         return idInventoryExists.then((data: any) => {
             console.log(data, 'DATA');
             if(data.length != 0){
-                return Promise.reject('Id inventory exists');        
+                return Promise.reject('Id inventory exists');
             }else {
                 return Promise.resolve(repository.insertNewData(table, productToSave));
             }
@@ -46,7 +47,7 @@ export function removeProduct(productId: string): Promise<string>{
 export function rateProduct(data: any): Promise<string>{
     try {
         
-        const user:any = decode.decodeHeader(data.authorization);
+        const user:any = decode(data.authorization);
 
         if(!data.ratingId){
             const addRating: any = saveRating(data.productId, data.rate, user.id);
@@ -65,13 +66,4 @@ export function rateProduct(data: any): Promise<string>{
 }
 export function unRateProduct(idRating: string): Promise<string>{
     return repository.deleteDataById('rateproduct', idRating);
-}
-
-export default {
-    getAllProduct,
-    addProduct,
-    saveImage,
-    removeProduct,
-    rateProduct,
-    unRateProduct
 }

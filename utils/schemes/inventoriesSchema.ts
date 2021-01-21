@@ -13,4 +13,3 @@ export const updateInventorySchema = {
     name: inventoriesNameSchema,
     description: inventoriesDescriptionSchema
 }
-

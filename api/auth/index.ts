@@ -1,13 +1,12 @@
 import express, {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import config from '../../config';
 import boom from '@hapi/boom';
+import config from '../../config';
+// BASIC STRATEGY PASSPORT
+import '../../utils/auth/strategies/basic';
 
 const router: Router = express.Router();
-
-// BASIC STRATEGY
-require('../../utils/auth/strategies/basic');
 
 router.post('/token', token);
 
@@ -31,7 +30,7 @@ async function token(req:Request, res:Response, next: NextFunction){
     
                 return res.status(200).json({access_token: token});
             });          
-        } catch(error: any) {
+        } catch(error) {
             next(error);        
         }
     })(req, res);

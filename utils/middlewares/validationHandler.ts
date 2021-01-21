@@ -6,12 +6,10 @@ function validate(data: any, schema: any){
     return error;
 }
 
-function validationHandler(schema: any, check: any = 'body'){
+export default function validationHandler(schema: any, check: any = 'body'){
     return function(req: any, res: any, next: any){
         const error: any = validate(req[check], schema);
 
         error ? next(boom.badRequest(error)): next();
     };
 }
-
-export default validationHandler;

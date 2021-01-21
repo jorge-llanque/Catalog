@@ -28,9 +28,3 @@ export function errorHandler(err: any, req: any, res: any, next: any){
     res.status(statusCode);
     res.json(withErrorStack(payload, err.stack));
 }
-
-export default {
-    logErrors,
-    wrapErrors,
-    errorHandler
-}

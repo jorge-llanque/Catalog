@@ -1,18 +1,10 @@
 import express, {Router, Request, Response, NextFunction} from 'express'
-import passport from 'passport';
 import {productServices} from '../../core/services';
 import {Product, Role} from '../../core/models';
-import { authorize } from '../../utils/middlewares/validateRole';
-import validationHandler from '../../utils/middlewares/validationHandler';
-import { createProductSchema, productIdSchema } from '../../utils/schemes/productsSchema';
-import cpUpload from '../../utils/middlewares/uploadFiles';
+import { authorize, validationHandler, cpUpload, auth } from '../../utils/middlewares';
+import { createProductSchema, productIdSchema, rateProductSchema } from '../../utils/schemes';
 
 const router:Router = express.Router();
-
-// JWT STRATEGY
-require('../../utils/auth/strategies/jwt');
-
-let auth: any = passport.authenticate("jwt", {session: false})
 
 router.get('/', auth, getProducts);
 router.post('/', auth, authorize([Role.Writer, Role.Admin, Role.Customer]),
@@ -21,12 +13,11 @@ router.put('/:productId/updateImage', auth, authorize([Role.Writer, Role.Admin, 
             validationHandler({productId: productIdSchema}, 'params'), cpUpload,updateImage);
 router.delete('/:productId', auth, authorize([Role.Writer, Role.Admin, Role.Customer]),
             validationHandler({productId: productIdSchema}, 'params'), deleteProduct);
-router.post('/:productId/like', auth, authorize([Role.Customer, Role.Writer, Role.Admin]),
-            validationHandler({productId: productIdSchema}, 'params'), like);
-router.post('/:productId/unlike', auth, authorize([Role.Customer, Role.Writer, Role.Admin]), 
-            validationHandler({productId:productIdSchema}, 'params'), unlike);
+router.post('/:productId/rate', auth, authorize([Role.Customer, Role.Writer, Role.Admin]),
+            validationHandler({productId: productIdSchema}, 'params'),
+            validationHandler(rateProductSchema), rate);
 router.delete('/:idRating/unrate', auth, authorize([Role.Customer, Role.Writer, Role.Admin]), 
-            validationHandler({idRating:productIdSchema}, 'params'), unrate);
+            validationHandler({idRating: productIdSchema}, 'params'), unrate);
 
 
 
@@ -36,7 +27,7 @@ function getProducts(req:Request, res:Response, next: NextFunction){
             message: "products listed",
             data: list
         });
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error)
     });
 }
@@ -48,21 +39,21 @@ function createProduct(req:Request, res:Response, next: NextFunction){
             message: 'Product added',
             data: productId
         })
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error);
     });
 }
 
 function updateImage(req:Request, res:Response, next: NextFunction){
     const {productId} = req.params;
-    const image = req.files;
+    const { files } = req
     
-    productServices.saveImage(productId, image).then((productId: string) => {
+    productServices.saveImage(productId, files).then((productId: string) => {
         res.status(200).json({
             message: 'Product updated',
             data: productId
         })
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error);
     });
 }
@@ -74,51 +65,25 @@ function deleteProduct(req:Request, res:Response, next: NextFunction){
             message: 'Product deleted',
             data: productIdDeleted
         })
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error);
     });
 }
 
-function like(req:Request, res:Response, next: NextFunction){
-    const productId: string = req.params.productId;
-    const authorization: string | undefined = req.headers.authorization;
-    const ratingId: string | undefined = req.body.ratingId;
-    const rate: string = 'like';
+function rate(req:Request, res:Response, next: NextFunction){
 
     const data: object = {
-        productId,
-        authorization,
-        ratingId,
-        rate
+        productId: req.params.productId,
+        authorization: req.headers.authorization,
+        ratingId: req.body.ratingId,
+        rate: req.body.rate
     }
     productServices.rateProduct(data).then((productRated: string) => {
         res.status(200).json({
             message: 'Product rated',
             data: productRated
         })
-    }).catch((error: any) => {
-        next(error);
-    });
-}
-function unlike(req:Request, res:Response, next: NextFunction){
-
-    const productId: string = req.params.productId;
-    const authorization: string | undefined = req.headers.authorization;
-    const ratingId: string | undefined = req.body.ratingId;
-    const rate: string = 'unlike';
-
-    const data: object = {
-        productId,
-        authorization,
-        ratingId,
-        rate
-    }
-    productServices.rateProduct(data).then((productRated: string) => {
-        res.status(200).json({
-            message: 'Product rated',
-            data: productRated
-        })
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error);
     });
 }
@@ -130,9 +95,9 @@ function unrate(req:Request, res:Response, next: NextFunction){
             message: 'Product unrated',
             data: ratingId
         })
-    }).catch((error: any) => {
+    }).catch((error: Error) => {
         next(error);
     });
 }
 
-export {router}
+export default router
