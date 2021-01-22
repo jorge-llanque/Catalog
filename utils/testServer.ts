@@ -1,9 +1,12 @@
 import express from 'express';
 import supertest from 'supertest';
 
-export default function testServer(route){
+function testServer(route: any){
     
     const app = express();
     route(app);
+    console.log('AQUII');
     return supertest(app);
 }
+
+export default testServer

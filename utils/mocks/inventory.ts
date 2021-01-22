@@ -100,13 +100,10 @@ export const inventoryMock = [{"id":"6f52d4d1-1a4e-4079-920b-a01b5b48f3fc","name
 {"id":"bb891328-7a7a-4453-b59b-4c1d862c3bfd","name":"Ford","description":"mauris ullamcorper purus sit amet nulla quisque arcu"}]
 
 
-export class InventoryServiceMock {
-    async getInventory(){
-        return Promise.resolve(inventoryMock);
-    }
-
-    async createItem(){
-        return Promise.resolve(inventoryMock[0]);
-    }
+export async function getAllInventoryItems() {
+    return Promise.resolve(inventoryMock);
 }
 
+export async function createItem() {
+    return Promise.resolve(inventoryMock[0]);
+}

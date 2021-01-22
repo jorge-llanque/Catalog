@@ -19,7 +19,7 @@ router.delete('/:itemId', auth, authorize([Role.Writer, Role.Admin, Role.Custome
 
 
 function getInventoryItems(req:Request, res:Response, next: NextFunction){
-    inventoryServices.getAllInventoryItems().then((list: object)=>{
+    inventoryServices.getAllInventoryItems().then((list: any)=>{
         res.status(200).json({
             message: "movies listed",
             data: list  
