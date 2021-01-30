@@ -19,9 +19,10 @@ function handleConnection(){
             console.error('[db err', err);
             setTimeout(handleConnection, 2000);
         }else{
-            console.log('DB connected');
+            /* console.log('DB connected'); */
         }
     });
+
     connection.on('error', (err: any) => {
         console.error('[db err]', err);
         if(err.code === 'PROTOCOL_CONNECTION_LOST'){

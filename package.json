@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "nodemon api/index.ts --exec ts-node",
         "start": "set NODE_ENV=production && nodemon api/index.ts --exec ts-node",
-        "test": "mocha -r ts-node/register 'tests/**/*.ts'"
+        "test": "mocha --exit",
+        "build": " npm test && tsc"
     },
     "keywords": [
         "javascript",

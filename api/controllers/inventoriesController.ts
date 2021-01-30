@@ -6,7 +6,7 @@ import { auth, authorize, validationHandler } from '../../utils/middlewares';
 
 const router: Router = express.Router();
 
-router.get('/', auth, authorize([Role.Writer, Role.Admin, Role.Customer]), getInventoryItems);
+router.get('/', getInventoryItems);
 router.post('/', auth, authorize([Role.Admin, Role.Customer]), 
             validationHandler(createInventorySchema), 
             createItem);
@@ -21,8 +21,8 @@ router.delete('/:itemId', auth, authorize([Role.Writer, Role.Admin, Role.Custome
 function getInventoryItems(req:Request, res:Response, next: NextFunction){
     inventoryServices.getAllInventoryItems().then((list: any)=>{
         res.status(200).json({
-            message: "movies listed",
-            data: list  
+            message: "Inventory listed",
+            data: list
         });
     }).catch((error: Error) => {
         next(error)
