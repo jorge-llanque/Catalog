@@ -4,7 +4,7 @@ export type Rate = 'like' | 'unlike' | 'unrate';
 
 export interface Product {
     id: string,
-    idInventoryItems: string,
+    inventory: string,
     imagenUrl: string,
     like: number,
     unlike: number 
@@ -12,34 +12,34 @@ export interface Product {
 
 interface RateProduct {
     id: string,
-    userId: string,
-    productId: string,
-    admire: number
+    user: string,
+    product: string,
+    admire: boolean
 }
 
 export function createProductForSave(item: string):Product{
     return {
         id: uuidv4(),
-        idInventoryItems: item,
+        inventory: item,
         imagenUrl: '/public/default-imagen',
         like: 0,
         unlike: 0
     }
 }
 
-function createRating(idProduct: string, valueRate: number, idUser: string, idRating: string): RateProduct{
+function createRating(idProduct: string, valueRate: boolean, idUser: string, idRating: string): RateProduct{
     return {
         id: idRating,
-        userId: idUser,
-        productId: idProduct,
+        user: idUser,
+        product: idProduct,
         admire: valueRate
     }
 }
 
 export function saveRating(idProduct: string, rate: Rate, idUser: string, idRating?: string): RateProduct{
-  
 
-    const valueRate: number = ('like'.includes(rate)) ? 1 : 0;
+    const valueRate: boolean = (rate == 'like') ? true : false;
+    console.log(valueRate)
     if(idRating){
         return createRating(idProduct, valueRate, idUser, idRating);
     } else{

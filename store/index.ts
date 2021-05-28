@@ -1,1 +1,1 @@
-export {default as repository} from './mysql';
+export { default as repository } from './queries/queries';

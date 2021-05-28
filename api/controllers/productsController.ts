@@ -6,23 +6,18 @@ import { createProductSchema, productIdSchema, rateProductSchema } from '../../u
 
 const router:Router = express.Router();
 
-router.get('/', auth, getProducts);
-router.post('/', auth, authorize([Role.Writer, Role.Admin, Role.Customer]),
-            validationHandler(createProductSchema), createProduct);
-router.put('/:productId/updateImage', auth, authorize([Role.Writer, Role.Admin, Role.Customer]),
-            validationHandler({productId: productIdSchema}, 'params'), cpUpload,updateImage);
-router.delete('/:productId', auth, authorize([Role.Writer, Role.Admin, Role.Customer]),
-            validationHandler({productId: productIdSchema}, 'params'), deleteProduct);
-router.post('/:productId/rate', auth, authorize([Role.Customer, Role.Writer, Role.Admin]),
-            validationHandler({productId: productIdSchema}, 'params'),
-            validationHandler(rateProductSchema), rate);
-router.delete('/:idRating/unrate', auth, authorize([Role.Customer, Role.Writer, Role.Admin]), 
-            validationHandler({idRating: productIdSchema}, 'params'), unrate);
+router.get('/', getProducts);
+router.post('/', createProduct);
+router.put('/:productId/updateImage', cpUpload,updateImage);
+router.delete('/:productId', deleteProduct);
+
+router.post('/:productId/rate', auth, rate);
+router.delete('/:idRating/unrate', auth, unrate);
 
 
 
 function getProducts(req:Request, res:Response, next: NextFunction){
-    productServices.getAllProduct().then((list: Product[]) => {
+    productServices.getAllProduct().then((list: Array<Product> ) => {
         res.status(200).json({
             message: "products listed",
             data: list
@@ -34,10 +29,9 @@ function getProducts(req:Request, res:Response, next: NextFunction){
 
 function createProduct(req:Request, res:Response, next: NextFunction){
     const {idInventoryItems} = req.body
-    productServices.addProduct(idInventoryItems).then((productId: string) => {
+    productServices.addProduct(idInventoryItems).then(() => {
         res.status(201).json({
-            message: 'Product added',
-            data: productId
+            message: 'Product added'
         })
     }).catch((error: Error) => {
         next(error);
@@ -74,9 +68,8 @@ function rate(req:Request, res:Response, next: NextFunction){
 
     const data: object = {
         productId: req.params.productId,
-        authorization: req.headers.authorization,
-        ratingId: req.body.ratingId,
-        rate: req.body.rate
+        rate: req.body.rate,
+        authorization: req.headers.authorization
     }
     productServices.rateProduct(data).then((productRated: string) => {
         res.status(200).json({

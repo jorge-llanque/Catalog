@@ -2,7 +2,7 @@ import { User, createUser, updateNewAttributes} from '../models';
 import {repository} from '../../store/';
 import decode from '../../utils/auth/decodeHeader';
 
-const table: string = 'user';
+const table: string = 'User';
 const column: string = 'username';
 
 export function getUserById(token: any): Promise<User>{

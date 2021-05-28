@@ -2,27 +2,19 @@ import {repository} from '../../store/';
 import {Product, createProductForSave, Rate, saveRating} from '../models';
 import decode from '../../utils/auth/decodeHeader';
 
-const table: string = 'products';
-const column: string = 'idInventoryItems';
+const table: string = 'Products';
+const column: string = 'inventory';
 
 export function getAllProduct():Promise<Product[]>{
-
     return Promise.resolve(repository.listData(table));
 }
 
-export function addProduct(item: string):Promise<string>{
+export function addProduct(item: string):Promise<void>{
     try {
+        
         const productToSave = createProductForSave(item);
+        return Promise.resolve(repository.insertNewData(table, productToSave));
 
-        const idInventoryExists = repository.getDataByColumn(table, productToSave.idInventoryItems, column);
-        return idInventoryExists.then((data: any) => {
-            console.log(data, 'DATA');
-            if(data.length != 0){
-                return Promise.reject('Id inventory exists');
-            }else {
-                return Promise.resolve(repository.insertNewData(table, productToSave));
-            }
-        })
     } catch (error) {
         return Promise.reject(error);
     }
@@ -46,17 +38,19 @@ export function removeProduct(productId: string): Promise<string>{
 
 export function rateProduct(data: any): Promise<string>{
     try {
-        
+
         const user:any = decode(data.authorization);
 
         if(!data.ratingId){
             const addRating: any = saveRating(data.productId, data.rate, user.id);
-            repository.insertNewData('rateproduct', addRating);
-            return repository.refreshRating(table, addRating);
+            repository.insertNewData('RateProduct', addRating);
+            /* return repository.refreshRating(table, addRating); */
+            return Promise.resolve('Not implemented')
         }else{
             const addRating: any = saveRating(data.productId, data.rate, user.id, data.ratingId);
-            repository.updateDataById('rateproduct', data.ratingId, addRating);
-            return repository.refreshRating(table, addRating);
+            repository.updateDataById('RateProduct', data.ratingId, addRating);
+            /* return repository.refreshRating(table, addRating); */
+            return Promise.resolve('Not implemented')
         }
         
     } catch (error) {

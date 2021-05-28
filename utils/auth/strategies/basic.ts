@@ -9,6 +9,7 @@ passport.use(
     new BasicStrategy(async function(username, password, cb){
         try {
             const [user]: any = await userServices.getUserByUsername(username)
+            console.log(user, '/basic/user')
 
             if(!user || user == undefined) {
                 return cb(boom.unauthorized(), false)
