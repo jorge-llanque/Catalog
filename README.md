@@ -22,5 +22,5 @@ The principal tools that I use for this project are:
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
-## AUTHOR
+## DEVELOPER
 * **Jorge LLanque** - *JS Developer* - [LinkedIn](https://www.linkedin.com/in/jorgellanque)
